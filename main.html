@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content='width=device-width, initial-scale=1' name='viewport'/>
+  <style>
+    body{
+      background: -webkit-linear-gradient(top, #3f4c6b 0%,#3f4c6b 100%);
+      height: 100hv;
+      width: 100hw;
+    }
+    #header{
+      text-align: center;
+      font-size: 20vw;
+      height: 20vw
+    }
+    #drawing{
+      position: relative;
+      height: 40vh;
+      width: 100vw;
+    }
+    #control{
+      position: relative;
+      height: 40vh;
+      width: 100vw;
+      text-align:center;
+    }
+    .raw{ 
+      min-height: 8vh; 
+      width: 100vw;
+    }
+    .led{
+      border-radius:5px;
+      display:inline;
+      float:left;
+      height: 8vh;
+      width: 9.090vw;
+      box-shadow: 0px 1px 0px 3px black inset;
+      background-color: #768d87;
+    }
+    .myButton {
+            -webkit-box-shadow:inset 0px 1px 3px 0px #91b8b3;
+            box-shadow:inset 0px 1px 3px 0px #91b8b3;
+            background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #768d87), color-stop(1, #6c7c7c));
+            background:linear-gradient(to bottom, #768d87 5%, #6c7c7c 100%);
+            background-color:#768d87;
+            -webkit-border-radius:5px;
+            border-radius:5px;
+            border:1px solid #566963;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-family:Arial;
+            font-size:15px;
+            font-weight:bold;
+            padding:11px 24px;
+            width: 50px;
+            text-decoration:none;
+            text-shadow:0px -1px 0px #2b665e;
+            margin-top: 20vh;
+    }
+    .myButton:hover {
+            background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #6c7c7c), color-stop(1, #768d87));
+            background:linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
+            background-color:#6c7c7c;
+    }
+    .myButton:active, .led:active{
+            position:relative;
+            top:1px;
+    }    
+  </style>
+  <script>
+    var turned_on = true;
+    var socket = new WebSocket("ws://raspberrypi.local/ws");
+    function create_leds(){
+      var drawing_area = document.getElementById("drawing");
+      for (var raw = 0; raw <= 4; raw++)
+      {
+        var raw_html = "<div class='raw'>";
+        for (var led = 0; led <= 10; led++)
+        {
+          raw_html += "<div class='led' onclick='led_clicked(" + 'this' + "," + led + "," + raw + ")'></div>"; 
+        }
+        raw_html += "</div>"; 
+        drawing_area.innerHTML += raw_html; 
+      }
+    }
+    function turn_on(){
+      turned_on = true;
+      console.log("turning on");
+    }
+    function turn_off(){
+      turned_on = false;
+      console.log("turning off");
+    }
+    function led_clicked(element , led, raw){
+      socket.send(JSON.stringify({"turned_on": turned_on, "led": led, "raw": raw}));
+      if(turned_on){
+        element.style.backgroundColor = '#f9f9f9';}
+      else{ 
+        element.style.backgroundColor = '#768d87';} 
+    }
+  </script>
+</head>
+<body onload="create_leds()">
+  <div id="header">Pixel Draw</div>
+  <div id="drawing"></div>
+  <div id="control">
+    <div class="myButton" onclick="turn_on()">Edit</div>
+    <div class="myButton"onclick="turn_off()">Clear</div>
+  </div>
+</body>
+</html>
+
+
+
+

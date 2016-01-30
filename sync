@@ -1,0 +1,7 @@
+#!/bin/bash
+
+HOST=root@${1:-raspberrypi.local}
+RSYNC="rsync --verbose -rlpt --delete-excluded"
+EXCLUDES="--exclude=*.pyc --exclude=*.swp --exclude=*.swo --exclude=*.git --exclude=.DS_Store"
+
+${RSYNC} . $HOST:/pixel ${EXCLUDES}
